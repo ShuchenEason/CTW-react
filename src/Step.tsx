@@ -239,6 +239,7 @@ export default () => {
                         initialValue={[{ number: '1' }]}
                     >
                         {(f, index, action) => {
+
                             /* Get the choosed dish and block */
                             dishData.push(action.getCurrentRowData())
                             choosed = dishData.map((v) => {
@@ -277,6 +278,7 @@ export default () => {
                                         width='sm'
                                         initialValue='1'
                                         max={10}
+                                        min={1}
                                         required
                                     />
                                 </ProForm.Group>
@@ -298,7 +300,7 @@ export default () => {
                             <div style={{ height: 60 }}>Restaurant</div>
                             <div style={{ height: 60 }}>Dishes</div>
                         </ProCard>
-                        <ProCard title="Details">
+                        <ProCard title="Details" colSpan="60%">
                             <div style={{ height: 60 }}>{meal}</div>
                             <div style={{ height: 60 }}>{peopleCount}</div>
                             <div style={{ height: 60 }}>{restaurant}</div>
