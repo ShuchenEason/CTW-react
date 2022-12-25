@@ -156,6 +156,7 @@ export default () => {
                         placeholder="Please enter"
                         width="md"
                         max={10}
+                        min={1}
                         rules={[{ required: true }]}
                     />
                 </StepsForm.StepForm>
