@@ -1,5 +1,12 @@
 # Pre-order App
-
+To start the project, first download the packages.
+```
+npm install
+```
+Then start the project and enjoy!
+```
+npm start
+```
 ## Step 1
 Select Meal Category (breakfast/lunch/dinner).
 Need to input number of people.

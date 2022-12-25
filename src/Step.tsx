@@ -1,3 +1,4 @@
+import { useRef, useState } from 'react';
 import {
     ProCard,
     ProForm,
@@ -7,17 +8,16 @@ import {
     ProFormSelect,
     StepsForm,
 } from '@ant-design/pro-components';
-import { Button, message } from 'antd';
-import { useRef, useState } from 'react';
-import data from './data.json'
+import { Form } from 'antd'
 import type { FormListActionType } from '@ant-design/pro-components';
+import { Button, message } from 'antd';
+import data from './data.json'
 
 type DataSourceType = {
     id: React.Key;
     dish?: string;
     number?: number;
 };
-
 
 export default () => {
 
@@ -48,7 +48,7 @@ export default () => {
                 }}
                 formProps={{
                     validateMessages: {
-                        required: 'This filed is required',
+                        required: 'This field is required',
                     },
                 }}
                 submitter={{
@@ -98,7 +98,7 @@ export default () => {
                                 previous
                             </Button>,
                             <Button type="primary" key="goToTree" onClick={() => props.onSubmit?.()}>
-                                提交
+                                submit
                             </Button>,
                         ];
                     },
@@ -132,6 +132,7 @@ export default () => {
                 >
                     <ProFormSelect
                         label="Please Select a Meal"
+                        placeholder="Please choose"
                         name="meal"
                         width="md"
                         rules={[{ required: true, },]}
@@ -151,7 +152,10 @@ export default () => {
                         ]}
                     />
                     <ProFormDigit
-                        name="peoplecount" label="" width="md"
+                        name="peoplecount"
+                        label="Please Enter Number of People"
+                        placeholder="Please enter"
+                        width="md"
                         max={10}
                         rules={[{ required: true }]}
                     />
@@ -163,13 +167,13 @@ export default () => {
                     title="Step2"
                     onFinish={async (value) => {
                         const restNew = value.restaurant
-                        // console.log(restNew);
                         setRest(restNew)
                         return true
                     }}
                 >
                     <ProFormSelect
                         label="Please Select a Restaurant"
+                        placeholder="Please choose"
                         name="restaurant"
                         width="md"
                         rules={[{ required: true }]}
@@ -190,33 +194,47 @@ export default () => {
                 >
                     <ProFormList
                         actionRef={actionRef}
+                        actionGuard={{
+                            beforeAddRow: async (defaultValue, insertIndex, count) => {
+                                const last: any = actionRef.current?.get(insertIndex as number - 1)
+                                if (last.dish) {
+                                    return Promise.resolve(true)
+                                } else {
+                                    return false
+                                }
+                            }
+                        }}
                         name="dishes"
                         label="Ordering Dishes"
                         copyIconProps={false}
+                        creatorButtonProps={{
+                            creatorButtonText: 'Add new dishes',
+                        }}
                         deleteIconProps={{
                             tooltipText: 'Cancel this order',
                         }}
-                        itemContainerRender={(doms) => {
-                            return <ProForm.Group>{doms}</ProForm.Group>;
-                        }}
                         rules={[
                             {
-                                validator: (_, value) => {
+                                validator: async (_, value) => {
                                     /* Dishes number validation */
                                     let temp: number = 0
                                     value.map((v: any) => {
-                                        temp += Number(v.number) || 0
+                                        if (v.dish) {
+                                            temp += Number(v.number)
+                                        } else {
+                                            throw new Error('Please choose a dish')
+                                        }
                                     })
                                     if (temp < peopleCount) {
-                                        return Promise.reject(new Error('The total number of dishes is not enough!'));
+                                        throw new Error('The total number of dishes is not enough!')
                                     } else if (temp > 10) {
-                                        return Promise.reject(new Error('The total number of dishes is too much!(A maximum of 10 is allowed)'));
+                                        throw new Error('The total number of dishes is too much!(A maximum of 10 is allowed)')
                                     }
                                     else {
-                                        return Promise.resolve()
+                                        return Promise.resolve
                                     }
                                 }
-                            }
+                            },
                         ]}
                         initialValue={[{ number: '1' }]}
                     >
@@ -243,38 +261,38 @@ export default () => {
 
                             })
                             return (
-                                <>
+                                <ProForm.Group>
                                     <ProFormSelect
-                                        key={Math.random()}
                                         name="dish"
-                                        label="Dish"
+                                        label="Please Select a Dish"
+                                        placeholder="Please select"
                                         width='sm'
-                                        rules={[{ required: true }]}
+                                        required
                                         fieldProps={{ options: dishAvailable }}
                                     />
                                     <ProFormDigit
-                                        key={Math.random()}
                                         name="number"
-                                        label="Number"
+                                        label="Please Enter Number of Servings"
+                                        placeholder="Please enter"
                                         width='sm'
                                         initialValue='1'
                                         max={10}
-                                        rules={[{ required: true }]}
+                                        required
                                     />
-                                </>
+                                </ProForm.Group>
                             )
                         }}
                     </ProFormList>
+
                 </StepsForm.StepForm>
 
                 <StepsForm.StepForm name="review" title="Review">
                     <ProCard
-                        title="Ordering Infomation"
-                        extra="Details"
+                        title="Review your orders please"
                         bordered
                         headerBordered
                     >
-                        <ProCard title="Ordering Infomation" colSpan="40%">
+                        <ProCard title="Ordering Info" colSpan="40%">
                             <div style={{ height: 60 }}>Meal</div>
                             <div style={{ height: 60 }}>No. of People</div>
                             <div style={{ height: 60 }}>Restaurant</div>
@@ -288,16 +306,20 @@ export default () => {
                                 <ProCard bordered>
                                     <ProCard title="Dish" colSpan="50%">
                                         {dishes?.map((dish) => {
-                                            return (
-                                                <div style={{ height: 60 }}>{dish.dish}</div>
-                                            )
+                                            if (dish.number !== 0) {
+                                                return (
+                                                    <div style={{ height: 60 }}>{dish.dish}</div>
+                                                )
+                                            }
                                         })}
                                     </ProCard>
                                     <ProCard title="Number">
                                         {dishes?.map((dish) => {
-                                            return (
-                                                <div style={{ height: 60 }}>{dish.number}</div>
-                                            )
+                                            if (dish.number !== 0) {
+                                                return (
+                                                    <div style={{ height: 60 }}>{dish.number}</div>
+                                                )
+                                            }
                                         })}
                                     </ProCard>
                                 </ProCard>
