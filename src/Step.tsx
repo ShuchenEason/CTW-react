@@ -8,7 +8,6 @@ import {
     ProFormSelect,
     StepsForm,
 } from '@ant-design/pro-components';
-import { Form } from 'antd'
 import type { FormListActionType } from '@ant-design/pro-components';
 import { Button, message } from 'antd';
 import data from './data.json'
@@ -56,49 +55,49 @@ export default () => {
                         if (props.step === 0) {
                             return (
                                 <Button type="primary" onClick={() => props.onSubmit?.()}>
-                                    next
+                                    Next
                                 </Button>
                             );
                         }
 
                         if (props.step === 1) {
                             return [
-                                <Button key="pre" onClick={() => {
+                                <Button key="preToZero" onClick={() => {
                                     props.form?.resetFields()
                                     props.onPre?.()
                                 }}>
-                                    previous
+                                    Previous
                                 </Button>,
-                                <Button type="primary" key="goToTree" onClick={() => props.onSubmit?.()}>
-                                    next
+                                <Button type="primary" key="goToTwo" onClick={() => props.onSubmit?.()}>
+                                    Next
                                 </Button>,
                             ];
                         }
 
                         if (props.step === 2) {
                             return [
-                                <Button key="pre" onClick={() => {
+                                <Button key="preToOne" onClick={() => {
                                     props.form?.resetFields()
                                     actionRef.current?.remove([1, 2, 3, 4, 5, 6, 7, 8, 9])
                                     props.onPre?.()
                                 }}>
-                                    previous
+                                    Previous
                                 </Button>,
-                                <Button type="primary" key="goToTree" onClick={() => props.onSubmit?.()}>
-                                    next
+                                <Button type="primary" key="goToThree" onClick={() => props.onSubmit?.()}>
+                                    Next
                                 </Button>,
                             ];
                         }
 
                         return [
-                            <Button key="pre" onClick={() => {
+                            <Button key="preToTwo" onClick={() => {
                                 props.form?.resetFields()
                                 props.onPre?.()
                             }}>
-                                previous
+                                Previous
                             </Button>,
-                            <Button type="primary" key="goToTree" onClick={() => props.onSubmit?.()}>
-                                submit
+                            <Button type="primary" key="goReview" onClick={() => props.onSubmit?.()}>
+                                Submit
                             </Button>,
                         ];
                     },
